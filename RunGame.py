@@ -2,6 +2,16 @@
 # Jacob Terkuc - 101196620
 # Owen Pearson -
 
+# Pair Programming Questions
+# Jacob Terkuc
+# 1: Github and Voice Chat
+# 2: I wrote a lot of my code myself, but we collaborated on coming up with the best way to implement the functions we
+#    independently wrote, as well as brainstormed.
+# 3: The biggest one I ran into was figuring out the best way to format the settings.txt file.
+# 4: We each rotated once, so Owen started the rotation as the driver, and I ended it as the driver.
+# 5: Using live coding would definitely be an easier way to work more collaboratively on coding assignments, although
+#    GitHub proved to be fairly useful.
+
 import Duty
 import random
 import json
