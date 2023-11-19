@@ -1,7 +1,52 @@
+# Assignment 09 - COMP 1405 - Friday, November 17th, 2023
+# Jacob Terkuc - 101196620
+# Owen Pearson -
+
 import Duty
 import random
+import json
+
+
+# Function to parse settings.txt file, returns a dictionary.
+# Jacob Terkuc
+def parse_settings() -> dict:
+    # Attempt to load settings.txt file
+    try:
+        # Reads the file and converts the json data into a usable dictionary to be returned. Ignores lines
+        # starting with '#'.
+        with open("settings.txt", "r") as file:
+            json_data = '\n'.join(line for line in file if not line.startswith('#'))
+
+    # Exception if the file settings.txt is not found
+    except FileNotFoundError:
+        print("Error: No 'settings.txt' file found. Making one now... Please fill in the file with settings and rerun "
+              "the program.")
+
+        # This code block creates a new file settings.txt and fills it with comments and the default values. Uses json
+        # formatting.
+        # Creates a json file with the default settings in it on first run.
+        with open('settings.txt', 'w') as file:
+            file.write("# Debug (bool): Enables/disables debug output in terminal.\n")
+            file.write("# Timescale (int): Multiplier used to determine the timescale.\n")
+            file.write("# Probability (int): Used to determine the likelihood of an anomaly appearing.\n")
+            file.write("# min_seconds_between_anomalies (int): Self explanatory, value is in seconds.\n")
+            file.write("{\n")
+            file.write('"debug": "False",\n')
+            file.write('"timescale": 60,\n')
+            file.write('"probability": 0.1,\n')
+            file.write('"min_seconds_between_anomalies": 10\n')
+            file.write('}')
+        exit()
+
+    # Return the json_data variable to be usable in the main function.
+    return json.loads(json_data)
+
 
 def main():
+    # Loads settings using the parse_settings function.
+    # Jacob Terkuc
+    args = parse_settings()
+
     """
     The main function is mostly just here to setup the game and keep it running in a loop.
     It has a specific order of events that it follows.
@@ -14,15 +59,17 @@ def main():
     # but this should make it easier for you to modify it later.
 
     # These 'helper functions' just clean up the main function and make it more readable.
-    # We need to add rooms to the game and we need to register what anomalies are possible.
+    # We need to add rooms to the game and we\ need to register what  anomalies are possible.
+
     add_rooms()
     register_anomalies()
 
+    # Code block modified to use the variables from the args dict. - Jacob Terkuc
     # It might be cleaner to put all of these into their own helper function. Feel free to do that if you think it would be better!
-    Duty.set_setting("debug", False) # Setting this to True will show additional information to help you debug new anomalies
-    Duty.set_setting("timescale", 60)
-    Duty.set_setting("probability", 0.1)
-    Duty.set_setting("min_seconds_between_anomalies", 10*60)
+    Duty.set_setting("debug", args["debug"])  # Setting this to True will show additional information to help you debug new anomalies
+    Duty.set_setting("timescale", args["timescale"])
+    Duty.set_setting("probability", args["probability"])
+    Duty.set_setting("min_seconds_between_anomalies", args["min_seconds_between_anomalies"] * 60)
 
     # Initialize the game with all of the data we've just set up.
     Duty.init()
@@ -41,7 +88,6 @@ def main():
             anomaly_created = False
             while not anomaly_created:
                 anomaly_created = create_anomaly()
-            
 
         # This will update the game status to check if we've lost the game or reached the end.
         # Update returns True if the game should keep going or False if it should end after this loop.
@@ -54,14 +100,17 @@ def main():
         # to handle their actions.
         Duty.handle_input()
 
+
 def add_rooms():
     """
     Adds all of the rooms to the game. 
     Duty.add_room() takes a string for the name of a room and a list of strings for the items in the room.
     """
-    Duty.add_room("Living Room", ["42\" TV Playing Golf", "Black Leather Sofa", "Circular Metal Coffee Table", "Wooden Bookshelf with 3 Shelves"])
+    Duty.add_room("Living Room", ["42\" TV Playing Golf", "Black Leather Sofa", "Circular Metal Coffee Table",
+                                  "Wooden Bookshelf with 3 Shelves"])
     Duty.add_room("Kitchen", ["Gas Stove", "Retro Red Metal Refrigerator", "Oak Wooden Table", "4 Wooden Chairs"])
-    Duty.add_room("Bedroom", ["Queen Size Bed", "Oak Wooden Nightstand", "Oak Wooden Dresser", "Oak Wooden Desk", "Oak Wooden Chair"])
+    Duty.add_room("Bedroom", ["Queen Size Bed", "Oak Wooden Nightstand", "Oak Wooden Dresser", "Oak Wooden Desk",
+                              "Oak Wooden Chair"])
     Duty.add_room("Bathroom", ["Toilet with Oak Seat", "Chrome Sink", "Shower with Blue Tiles", "Medicine Cabinet"])
 
 
@@ -74,6 +123,7 @@ def register_anomalies():
     Duty.register_anomaly("CAMERA MALFUNCTION")
     Duty.register_anomaly("MISSING ITEM")
     Duty.register_anomaly("ITEM MOVEMENT")
+
 
 def create_anomaly() -> bool:
     """
@@ -109,6 +159,7 @@ def create_anomaly() -> bool:
         print(f"ERROR: Anomaly {anomaly} not found")
         return False
 
+
 def missing_item(room: str) -> bool:
     """
     Removes a random item from the room. This is a pretty straightforward one.
@@ -118,12 +169,13 @@ def missing_item(room: str) -> bool:
     4. Create the anomaly with the new list of items. (Duty.add_anomaly())
     """
     items = Duty.get_room_items(room)
-    item_index_to_remove = random.randint(0, len(items)-1)
+    item_index_to_remove = random.randint(0, len(items) - 1)
     new_items = items[:]
     new_items.pop(item_index_to_remove)
-    
+
     # add_anomaly returns True if the anomaly was created, False if it was not.
     return Duty.add_anomaly("MISSING ITEM", room, new_items)
+
 
 def item_movement(room: str) -> bool:
     """
@@ -141,12 +193,12 @@ def item_movement(room: str) -> bool:
         return False
 
     # Find two random items to swap
-    item_to_move = random.randint(0, len(items)-1)
-    item_to_move_to = random.randint(0, len(items)-1)
+    item_to_move = random.randint(0, len(items) - 1)
+    item_to_move_to = random.randint(0, len(items) - 1)
 
     # Make sure the two items are not the same
     while item_to_move == item_to_move_to:
-        item_to_move_to = random.randint(0, len(items)-1)
+        item_to_move_to = random.randint(0, len(items) - 1)
 
     # Make a copy to avoid accidentally modifying the original item list
     new_items = items[:]
@@ -158,5 +210,6 @@ def item_movement(room: str) -> bool:
     new_items[item_to_move_to] = item_a
 
     return Duty.add_anomaly("ITEM MOVEMENT", room, new_items)
+
 
 main()
