@@ -1,0 +1,10 @@
+# Debug (bool): Enables/disables debug output in terminal.
+# Timescale (int): Multiplier used to determine the timescale.
+# Probability (int): Used to determine the likelihood of an anomaly appearing.
+# min_seconds_between_anomalies (int): Self explanatory, value is in seconds.
+{
+"debug": "False",
+"timescale": 60,
+"probability": 0.1,
+"min_seconds_between_anomalies": 10
+}
