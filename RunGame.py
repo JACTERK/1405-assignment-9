@@ -12,6 +12,7 @@
 # 5: Using live coding would definitely be an easier way to work more collaboratively on coding assignments, although
 #    GitHub proved to be fairly useful.
 
+
 import Duty
 import random
 import json
@@ -121,7 +122,7 @@ def add_rooms():
     Duty.add_room("Kitchen", ["Gas Stove", "Retro Red Metal Refrigerator", "Oak Wooden Table", "4 Wooden Chairs"])
     Duty.add_room("Bedroom", ["Queen Size Bed", "Oak Wooden Nightstand", "Oak Wooden Dresser", "Oak Wooden Desk",
                               "Oak Wooden Chair"])
-    Duty.add_room("Bathroom", ["Toilet with Oak Seat", "Chrome Sink", "Shower with Blue Tiles", "Medicine Cabinet"])
+    Duty.add_room("Bathroom", ["4 Toilets with Oak Seats", "Chrome Sink", "Shower with Blue Tiles", "Medicine Cabinet"])
 
 
 def register_anomalies():
@@ -220,6 +221,50 @@ def item_movement(room: str) -> bool:
     new_items[item_to_move_to] = item_a
 
     return Duty.add_anomaly("ITEM MOVEMENT", room, new_items)
+
+
+# Owen Pearson
+def change_number_in_string(item: str) -> str:
+
+    number = '' #initialize empty string which we will hold the number(s) from string
+
+    for index, char in enumerate(item): #loop through char in item
+
+        if char.isdigit():
+            number += char
+
+            index_of_last_number = item.index(char)
+
+    index_first_number = index_of_last_number - len(number) + 1
+
+
+    new_number = int(number) + random.choice([-1,1]) #randomly add either 1 or -1
+
+    #use string splitting to concatenate and form new string
+    modified_string = item[:index_first_number] + str(new_number) + item[index_first_number + len(str(new_number)):]
+
+    return modified_string
+
+
+# Owen Pearson
+def number_change(room: str) -> bool:
+
+    items = Duty.get_room_items(room) #get items from room
+
+    items_from_room = items[:] #create deep copy of items from room
+
+    items_with_numbers = get_list_strings_with_numbers(items_from_room) #returns a list of items from room which contain numbers
+
+    item_to_be_modified = random.choice(items_with_numbers) #randomly select item from list of items that only contain strings with numbers
+
+    modified_item = change_number_in_string(item_to_be_modified) #call to function which handles manipulating string and returns string with modiified number
+
+    #update list, find index of the "orginal" item
+    index = items_from_room.index(item_to_be_modified)
+
+    items_from_room[index] = modified_item #modify list so that it contains the modified string
+
+    return Duty.add_anomaly("NUMBER CHANGE", room, items_from_room)
 
 
 main()
