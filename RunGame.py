@@ -166,6 +166,9 @@ def create_anomaly() -> bool:
         return missing_item(room)
     elif anomaly == "ITEM MOVEMENT":
         return item_movement(room)
+    # Owen Pearson
+    elif anomaly == "NUMBER CHANGE":  # if anomaly "NUMBER CHANGE" is choose then call number_change() which handles modifying list and adding anomaly
+        return number_change(room)
     else:
         print(f"ERROR: Anomaly {anomaly} not found")
         return False
